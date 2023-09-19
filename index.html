@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Word Game</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f0f0f0;
+        }
+
+        .container {
+            max-width: 400px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #fff;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            text-align: center;
+        }
+
+        h1 {
+            font-size: 24px;
+        }
+
+        .word-display {
+            margin: 20px 0;
+            font-size: 28px;
+            font-weight: bold;
+        }
+
+        #user-input {
+            width: 100%;
+            padding: 10px;
+            font-size: 16px;
+            margin-bottom: 10px;
+        }
+
+        #check-button {
+            background-color: #007bff;
+            color: #fff;
+            border: none;
+            padding: 10px 20px;
+            font-size: 16px;
+            cursor: pointer;
+        }
+
+        #message {
+            margin-top: 10px;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Word Game</h1>
+        <div class="word-display">
+            <p id="word"></p>
+        </div>
+        <input type="text" id="user-input" placeholder="Type your guess">
+        <button id="check-button">Check</button>
+        <p id="message"></p>
+    </div>
+    <script>
+        const wordDisplay = document.getElementById('word');
+        const userInput = document.getElementById('user-input');
+        const checkButton = document.getElementById('check-button');
+        const message = document.getElementById('message');
+        let wordList = [];
+
+        // Load words from the file
+        fetch('words.txt')
+            .then(response => response.text())
+            .then(data => {
+                wordList = data.split('\n');
+                startGame();
+            })
+            .catch(error => console.error(error));
+
+        function getRandomWord() {
+            const randomIndex = Math.floor(Math.random() * wordList.length);
+            return wordList[randomIndex].trim();
+        }
+
+        function startGame() {
+            const randomWord = getRandomWord();
+            wordDisplay.textContent = randomWord;
+            userInput.value = '';
+            message.textContent = '';
+            checkButton.addEventListener('click', checkGuess);
+        }
+
+        function checkGuess() {
+            const guessedWord = userInput.value.trim().toLowerCase();
+            const targetWord = wordDisplay.textContent.toLowerCase();
+
+            if (guessedWord === targetWord) {
+                message.textContent = 'Correct! You guessed the word.';
+            } else {
+                message.textContent = 'Incorrect. Try again.';
+            }
+
+            // Start a new round
+            setTimeout(startGame, 2000);
+        }
+    </script>
+</body>
+</html>
